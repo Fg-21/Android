@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">Tarea1.3</string>
-    <string name="titulo_actividad_a">Estás en la Actividad A</string>
-    <string name="titulo_actividad_b">¡Bienvenido a la Actividad B!</string>
-    <string name="ir_a_la_b">Ir a la Actividad B</string>
-    <string name="toast_ab">Toast desde la Actividad B</string>
-
-</resources>
