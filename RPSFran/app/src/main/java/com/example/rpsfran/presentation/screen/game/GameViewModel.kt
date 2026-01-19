@@ -2,6 +2,9 @@ package com.example.rpsfran.presentation.screen.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rpsfran.data.local.entity.Game
+import com.example.rpsfran.data.local.entity.RoundEntity
+import com.example.rpsfran.data.repos.GameRepository
 import com.example.rpsfran.domain.model.GameChoice
 import com.example.rpsfran.domain.model.GameResult
 import com.example.rpsfran.domain.model.GameState
@@ -15,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class GameViewModel(
+    private val repository: GameRepository,
     playerName: String,
     totalRounds: Int
 ) : ViewModel() {
@@ -26,6 +30,8 @@ class GameViewModel(
         GameState(playerName = playerName, totalRounds = totalRounds)
     )
     val gameState: StateFlow<GameState> = _gameState.asStateFlow()
+
+    private var currentGameId: Long = 0
 
     fun playRound(playerChoice: GameChoice) {
         viewModelScope.launch {
@@ -58,7 +64,42 @@ class GameViewModel(
                 isGameFinished = isFinished,
                 lastRoundResult = result
             )
+
+            if (isFinished) {
+                saveGameToDatabase()
+            }
         }
+    }
+
+    private suspend fun saveGameToDatabase() {
+        val state = _gameState.value
+        val winner = when {
+            state.playerScore > state.iaScore -> state.playerName
+            state.iaScore > state.playerScore -> "IA: ROBO-CRACK"
+            else -> "Empate"
+        }
+
+        val game = Game(
+            playerName = state.playerName,
+            totalRounds = state.totalRounds,
+            playerScore = state.playerScore,
+            iaScore = state.iaScore,
+            winner = winner
+        )
+
+        currentGameId = repository.insertGame(game)
+
+        val roundEntities = state.rounds.map { round ->
+            RoundEntity(
+                gameId = currentGameId,
+                roundNumber = round.roundNumber,
+                playerChoice = round.playerChoice,
+                iaChoice = round.iaChoice,
+                result = round.result
+            )
+        }
+
+        repository.insertRounds(roundEntities)
     }
 
     fun resetLastResult() {

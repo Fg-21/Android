@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rpsfran.domain.model.GameChoice
 import com.example.rpsfran.domain.model.GameResult
 import kotlinx.coroutines.delay
@@ -30,7 +29,7 @@ fun GameScreen(
     playerName: String,
     totalRounds: Int,
     onGameFinished: (String) -> Unit,
-    viewModel: GameViewModel = viewModel { GameViewModel(playerName, totalRounds) }
+    viewModel: GameViewModel
 ) {
     val gameState by viewModel.gameState.collectAsState()
     var showResultDialog by remember { mutableStateOf(false) }
@@ -49,7 +48,7 @@ fun GameScreen(
             delay(2500)
             val winner = if (gameState.playerScore > gameState.iaScore) {
                 playerName
-            } else if (gameState.iaScore > gameState.playerScore) {
+            } else if (gameState.playerScore < gameState.iaScore) {
                 "IA: ROBO-CRACK"
             } else {
                 "Empate"

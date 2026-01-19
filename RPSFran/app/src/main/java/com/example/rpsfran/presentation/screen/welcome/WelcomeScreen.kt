@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WelcomeScreen(
-    onStartGame: (String, Int) -> Unit
+    onStartGame: (String, Int) -> Unit,
+    onViewHistory: () -> Unit
 ) {
     var playerName by remember { mutableStateOf("") }
     var selectedRounds by remember { mutableStateOf(3) }
@@ -48,7 +49,7 @@ fun WelcomeScreen(
 
             Text(
                 text = "¡PIEDRA, PAPEL, TIJERAS!",
-                fontSize = 25.sp,
+                fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 textAlign = TextAlign.Center,
@@ -125,6 +126,25 @@ fun WelcomeScreen(
                         Text(
                             text = "¡JUGAR!",
                             fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedButton(
+                        onClick = onViewHistory,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFF1E88E5)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "VER HISTORIAL",
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
